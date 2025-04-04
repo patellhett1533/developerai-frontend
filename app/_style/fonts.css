@@ -1,0 +1,94 @@
+@font-face {
+    font-family: 'Light';
+    src: url("../_fonts/TestUntitledSans-Light.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LightItalic';
+    src: url("../_fonts/TestUntitledSans-LightItalic.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Regular';
+    src: url("../_fonts/TestUntitledSans-Regular.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'RegularItalic';
+    src: url("../_fonts/TestUntitledSans-RegularItalic.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Medium';
+    src: url("../_fonts/TestUntitledSans-Medium.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'MediumItalic';
+    src: url("../_fonts/TestUntitledSans-MediumItalic.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Bold';
+    src: url("../_fonts/TestUntitledSans-Bold.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'BoldItalic';
+    src: url("../_fonts/TestUntitledSans-BoldItalic.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Black';
+    src: url("../_fonts/TestUntitledSans-Black.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'BlackItalic';
+    src: url("../_fonts/TestUntitledSans-BlackItalic.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@layer theme {
+    :root {
+        --Regular: 'Regular';
+        --RegularItalic: 'RegularItalic';
+        --Medium: 'Medium';
+        --MediumItalic: 'MediumItalic';
+        --Bold: 'Bold';
+        --BoldItalic: 'BoldItalic';
+        --Black: 'Black';
+        --BlackItalic: 'BlackItalic';
+        --Light: 'Light';
+        --LightItalic: 'LightItalic';
+    }
+}

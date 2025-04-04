@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./colors.css";
+@import "./theme.css";
+@import "./base.css";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+
+  to {
+    height: 0;
+  }
+
+}

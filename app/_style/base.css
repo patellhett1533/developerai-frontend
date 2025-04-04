@@ -1,0 +1,28 @@
+@layer base {
+    body {
+        @apply bg-base-50 text-base-900 font-regular text-sm;
+    }
+
+    .minimal-scrollbar {
+        scrollbar-gutter: stable;
+    }
+
+    .minimal-scrollbar::-webkit-scrollbar {
+        width: 2px;
+        height: 2px;
+        opacity: 0.6;
+        position: fixed;
+    }
+
+    .minimal-scrollbar::-webkit-scrollbar-track {
+        width: 0;
+        display: none;
+    }
+
+    .minimal-scrollbar::-webkit-scrollbar-thumb {
+        width: 2px;
+        height: 2px;
+        background-color: var(--color-base-150);
+        border-radius: 999px;
+    }
+}
