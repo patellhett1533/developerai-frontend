@@ -1,5 +1,5 @@
 "use client";
-import './_style/globals.css'
+import "./_style/globals.css";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
@@ -16,9 +16,16 @@ export default function RootLayout({
   }, []);
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full h-screen overflow-hidden" suppressHydrationWarning>
+      <body
+        className="w-full h-screen overflow-hidden"
+        suppressHydrationWarning
+      >
         <Toaster />
-        <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
           {isMounted && children}
         </ThemeProvider>
       </body>

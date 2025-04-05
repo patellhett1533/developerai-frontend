@@ -10,7 +10,7 @@ const layout: React.FC<Props> = props => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      {props.children}
+      <div className="h-screen overflow-hidden w-full p-4">{props.children}</div>
     </SidebarProvider>
   );
 };

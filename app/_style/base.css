@@ -1,6 +1,6 @@
 @layer base {
     body {
-        @apply bg-base-50 text-base-900 font-regular text-sm;
+        @apply bg-base-50 text-base-900 font-regular text-base;
     }
 
     .minimal-scrollbar {

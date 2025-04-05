@@ -1,11 +1,15 @@
-import React from 'react'
+import ChatInput from "@/app/_components/(chat)/ChatInput";
+import React from "react";
 
 const page = () => {
   return (
-    <div>
-      chat bot area
+    <div className="h-full flex flex-col items-center justify-center w-full max-w-2xl mx-auto">
+      <div className="w-full text-center text-4xl mb-8 font-bold">
+        What do you want ?
+      </div>
+      <ChatInput />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
