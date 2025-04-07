@@ -1,9 +1,12 @@
 import React from "react";
 
-const SystemChatBox = () => {
+const SystemChatBox = ({ message }: { message: string }) => {
   return (
-    <div className="[&_h2]:text-lg [&_h2]:text-base-800 [&_h2]:font-medium [&_h2]:mt-4 [&_ul]:list-disc [&_ul]:ml-8 flex flex-col gap-2 text-base-650">
-      <p>
+    <div
+      className="[&_h2]:text-lg [&_h2]:text-base-800 [&_h2]:font-medium [&_h2]:mt-4 [&_ul]:list-disc [&_ul]:ml-8 flex flex-col gap-2 text-base-650"
+      dangerouslySetInnerHTML={{ __html: message }}
+    >
+      {/* <p>
         To fine-tune a Gemini model for specific purposes using external data
         sources like Stack Overflow and GitHub in a NestJS application, follow
         these steps:
@@ -23,7 +26,7 @@ const SystemChatBox = () => {
         </li>
         <li>Data formatted as CSV or Google Sheets</li>
         <li>Gemini API key with tuning permissions</li>
-      </ul>
+      </ul> */}
     </div>
   );
 };
