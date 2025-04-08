@@ -26,12 +26,12 @@ const Page = () => {
         <div className="flex justify-center w-full">
           <div className="w-full max-w-2xl px-4">
             {messages?.length > 0 ? (
-              messages.map((message) => {
+              messages.map((message, index) => {
                 return message.sender === "user" ? (
-                  <UserChatBox key={message.id} question={message.message} />
+                  <UserChatBox key={index} question={message.message} />
                 ) : (
                   <SystemChatBox
-                    key={message.id}
+                    key={index}
                     message={message.message}
                     // latestGeneratedAnswer={latestGeneratedAnswer}
                   />
@@ -46,11 +46,6 @@ const Page = () => {
                 message={latestGeneratedAnswer}
               />
             )}
-            {/* <div className="w-full pt-8">
-              <UserChatBox />
-              <div className="w-full my-4 bg-base-400 h-0.5 rounded-full"></div>
-              <SystemChatBox />
-            </div> */}
           </div>
         </div>
       </div>

@@ -57,6 +57,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      const randomId = crypto.randomUUID();
 
       while (true) {
         const { done, value } = await reader.read();
@@ -64,23 +65,30 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         if (done) break;
 
         const chunk = decoder.decode(value);
-        setLatestGeneratedAnswer((prev) => prev + chunk);
+        if (messages.find((msg) => msg.id === randomId)) {
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.id === randomId) {
+                return {
+                  ...msg,
+                  message: msg.message + chunk,
+                };
+              }
+              return msg;
+            })
+          );
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              message: chunk,
+              sender: "system",
+              timestamp: Date.now(),
+              id: randomId,
+            },
+          ]);
+        }
       }
-
-      const newMessage: ChatBox = {
-        message: question,
-        sender: "user",
-        timestamp: Date.now(),
-        id: crypto.randomUUID(),
-      };
-      setMessages((prev) => [...prev, newMessage]);
-      const newResponse: ChatBox = {
-        message: latestGeneratedAnswer,
-        sender: "system",
-        timestamp: Date.now(),
-        id: crypto.randomUUID(),
-      };
-      setMessages((prev) => [...prev, newResponse]);
       setLatestGeneratedAnswer("");
     } catch (error) {
       console.log(error);
