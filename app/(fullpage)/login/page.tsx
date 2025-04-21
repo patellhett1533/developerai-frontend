@@ -8,31 +8,30 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import AuthLayout from "@/app/_components/AuthLayout";
 import { post_api } from "@/helper/api";
+import { Loader } from "lucide-react";
 
 const Page = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     if (email && password) {
       try {
-        const response = await post_api("/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-          credentials: "include",
+        const { data, message } = await post_api("/auth/login", {
+          email,
+          password,
         });
 
-        if (!response.ok) {
-          toast.error("Login failed");
-        } else {
-          toast.success("Login successful");
+        if (data) {
+          toast.success(message);
           router.push("/dashboard");
+        } else {
+          toast.error(message);
         }
       } catch {
         toast.warning("Something went wrong");
@@ -40,6 +39,7 @@ const Page = () => {
     } else {
       toast("Please fill in all fields");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -101,7 +101,13 @@ const Page = () => {
           type="submit"
           className="w-full bg-blue-700/60 hover:bg-blue-700/80"
         >
-          Sign In
+          {isLoading ? (
+            <>
+              <Loader className="animate-spin" />
+            </>
+          ) : (
+            <>Sign In</>
+          )}
         </Button>
 
         <div className="flex items-center gap-3 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
