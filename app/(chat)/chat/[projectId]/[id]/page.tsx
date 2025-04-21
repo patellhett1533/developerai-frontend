@@ -27,12 +27,12 @@ const Page = () => {
           <div className="w-full max-w-2xl px-4">
             {messages?.length > 0 ? (
               messages.map((message, index) => {
-                return message.sender === "user" ? (
-                  <UserChatBox key={index} question={message.message} />
+                return message.role === "user" ? (
+                  <UserChatBox key={index} question={message} />
                 ) : (
                   <SystemChatBox
                     key={index}
-                    message={message.message}
+                    message={message}
                     // latestGeneratedAnswer={latestGeneratedAnswer}
                   />
                 );

@@ -10,7 +10,7 @@ export const post_api = async (url: string, data: unknown, headers?: { [key: str
       credentials: "include",
     });
 
-    return response.json();
+    return await response.json();
   } catch (error) {
     console.error("Error:", error);
   }

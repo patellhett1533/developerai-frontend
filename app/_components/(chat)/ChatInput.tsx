@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import StackOverflow from "@/public/icons/StackOverflow";
-import { useChatContext } from "@/app/(chat)/chat/useChat";
+import { useChatContext } from "@/app/(chat)/chat/[projectId]/useChat";
 
 const ChatInput = () => {
   const { askQuestion } = useChatContext();

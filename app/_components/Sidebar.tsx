@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 // import Link from "next/link";
 // import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +28,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Plus, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { get_api } from "@/helper/api";
+import { usePathname } from "next/navigation";
 // import { Plus } from "lucide-react";
 
 interface Props {
   property?: string;
+}
+
+interface Room {
+  id: string;
+  project_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  github_url: string;
+  rooms: Room[];
+  created_at: string;
+  updated_at: string;
 }
 
 const items = [
@@ -63,8 +83,26 @@ const teams = [
 ];
 
 const AppSidebar: React.FC<Props> = () => {
+  const pathname = usePathname()
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [projects, setProjects] = React.useState<Project[]>([]);
+  const [rooms, setRooms] = React.useState<Room[]>([]);
+  const [activeTeam, setActiveTeam] = React.useState(projects[0]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const { data } = await get_api(`/dashboard`);
+      if (data) {
+        setProjects(data);
+        setRooms(data.find((project: Project) => project.id === pathname.split("/")[2])?.room || []);
+        setActiveTeam(
+          data.find((project: Project) => project.id == pathname.split("/")[2]) || projects[0]
+        )
+      }
+    };
+    fetchRooms();
+  }, [])
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent className="h-full">
@@ -78,11 +116,11 @@ const AppSidebar: React.FC<Props> = () => {
                     className="data-[state=open]:text-base-700"
                   >
                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-base-100">
-                      <activeTeam.logo className="size-4" />
+                      <Sparkles className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{activeTeam.name}</span>
-                      <span className="truncate text-xs">{activeTeam.plan}</span>
+                      <span className="truncate font-semibold">{activeTeam?.name}</span>
+                      <span className="truncate text-xs">free</span>
                     </div>
                     <ChevronsUpDown className="ml-auto" />
                   </SidebarMenuButton>
@@ -94,27 +132,28 @@ const AppSidebar: React.FC<Props> = () => {
                   sideOffset={4}
                 >
                   <DropdownMenuLabel className="text-xs text-muted-foreground">
-                    Teams
+                    Projects
                   </DropdownMenuLabel>
-                  {teams.map((team, index) => (
+                  {projects.map((project, index) => (
                     <DropdownMenuItem
-                      key={team.name}
-                      onClick={() => setActiveTeam(team)}
+                      key={project.name}
+                      onClick={() => setActiveTeam(project)}
                       className="gap-2 p-2"
                     >
                       <div className="flex size-6 items-center justify-center rounded-sm border">
-                        <team.logo className="size-4 shrink-0" />
+                        <Sparkles className="size-4 shrink-0" />
                       </div>
-                      {team.name}
+                      {project.name}
                       <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="gap-2 p-2">
-                    <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                  <DropdownMenuItem className="gap-2 p-2" asChild>
+                   <Link href="/project/new" className="flex items-center gap-2"> <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                       <Plus className="size-4" />
                     </div>
-                    <div className="font-medium text-muted-foreground">Add team</div>
+                    <div className="font-medium text-muted-foreground">Add Project</div>
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -124,12 +163,20 @@ const AppSidebar: React.FC<Props> = () => {
         <SidebarGroup className="h-[calc(100dvh-142px)] overflow-auto">
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item, index) => (
+              {rooms.length > 0 && (
+                <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href={`/chat/${activeTeam?.id}`} className="hover:bg-base-200 border border-base-300">
+                    <span className="flex items-center gap-2"><Plus size={14} /> New Chat</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              )}
+              {rooms.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href}>
-                      {/* <item.icon /> */}
-                      <span>{item.name}</span>
+                    <a href={item.id} className="hover:bg-base-200">
+                      <span >{item.name}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
