@@ -45,7 +45,7 @@ const ChatInput = () => {
         <div className="flex items-center gap-2 absolute bottom-4 left-4">
           <DropdownMenu>
             <DropdownMenuTrigger className="" asChild>
-              <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200">
+              <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200 p-0">
                 <Plus size={14} />
               </Button>
             </DropdownMenuTrigger>
@@ -60,15 +60,16 @@ const ChatInput = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200">
+          <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200 p-0">
             <Github size={14} />
           </Button>
-          <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200">
+          <Button className="w-8 h-8  rounded-full cursor-pointer bg-transparent border border-base-200 hover:bg-base-200 p-0">
             <StackOverflow />
           </Button>
         </div>
         <Button
-          className="w-8 h-8 bg-blue-800 rounded-full absolute bottom-4 right-4 cursor-pointer"
+          className="w-8 h-8 bg-blue-800 rounded-full absolute bottom-4 right-4 cursor-pointer p-0"
+          disabled={question === ""}
           onClick={() => sendQuestion(question)}
         >
           <Send size={16} />

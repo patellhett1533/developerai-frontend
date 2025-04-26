@@ -1,26 +1,49 @@
 "use client";
 import ChatInput from "@/app/_components/(chat)/ChatInput";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import UserChatBox from "./UserChatBox";
 import SystemChatBox from "./SystemChatBox";
 import { useChatContext } from "../useChat";
+import { ArrowDown } from "lucide-react";
 
 const Page = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const { messages, latestGeneratedAnswer } = useChatContext();
+  const [isAutoScroll, setIsAutoScroll] = useState(true);
 
   useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
+    const container = messagesContainerRef.current;
+
+    const handleScroll = () => {
+      if (!container) return;
+
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+
+      setIsAutoScroll(isAtBottom);
+    };
+
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
     }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
   }, []);
 
-  const { messages, latestGeneratedAnswer } = useChatContext();
+  useEffect(() => {
+    if (isAutoScroll && messagesContainerRef.current) {
+      messagesContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages.length, latestGeneratedAnswer, isAutoScroll]);
+
 
   return (
     <div className="w-full h-full flex flex-col relative">
       <div
-        ref={messagesContainerRef}
         className="flex-1 overflow-y-auto w-full minimal-scrollbar"
       >
         <div className="flex justify-center w-full">
@@ -28,11 +51,11 @@ const Page = () => {
             {messages?.length > 0 ? (
               messages.map((message, index) => {
                 return message.role === "user" ? (
-                  <UserChatBox key={index} question={message} />
+                  <UserChatBox key={index} question={message.content} />
                 ) : (
                   <SystemChatBox
                     key={index}
-                    message={message}
+                    message={message.content}
                     // latestGeneratedAnswer={latestGeneratedAnswer}
                   />
                 );
@@ -46,6 +69,9 @@ const Page = () => {
                 message={latestGeneratedAnswer}
               />
             )}
+
+            <div ref={messagesContainerRef} />
+
           </div>
         </div>
       </div>

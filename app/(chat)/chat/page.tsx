@@ -1,17 +1,13 @@
-"use client";
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+"use client"
+import React, { useEffect } from 'react'
 
-const Page = () => {
-  const router = useRouter();
-  useEffect(() => {
-    if (sessionStorage.getItem("latest_project")) {
-      router.push(`/chat/${sessionStorage.getItem("latest_project")}`);
-    } else {
-      router.push("/project/new");
-    }
-  }, []);
-  return <></>;
-};
+const page = () => {
+    useEffect(() => {
+        window.location.href = `/chat/${localStorage.getItem('activeTeam')}`
+    })
+  return (
+    <div></div>
+  )
+}
 
-export default Page;
+export default page

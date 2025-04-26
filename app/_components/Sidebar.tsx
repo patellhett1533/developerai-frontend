@@ -23,17 +23,10 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Plus,
-  Sparkles,
-} from "lucide-react";
+import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Plus, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { get_api } from "@/helper/api";
@@ -61,59 +54,26 @@ interface Project {
   updated_at: string;
 }
 
-// const items = [
-//   {
-//     name: "Dashboard",
-//     href: "/",
-//   },
-//   {
-//     name: "Projects",
-//     href: "/projects",
-//   },
-//   {
-//     name: "Scrapers",
-//     href: "/dashboard/scrapers",
-//   },
-// ];
-
-// const teams = [
-//   {
-//     name: "Team 1",
-//     logo: Sparkles,
-//     plan: "Free",
-//   },
-//   {
-//     name: "Team 2",
-//     logo: Sparkles,
-//     plan: "Pro",
-//   },
-// ];
-
 const AppSidebar: React.FC<Props> = () => {
-  const pathname = usePathname();
+  const pathname = usePathname()
   const { isMobile } = useSidebar();
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [rooms, setRooms] = React.useState<Room[]>([]);
-  const [activeTeam, setActiveTeam] = React.useState(projects[0]);
+  const [activeTeam, setActiveTeam] = React.useState(projects.find(item => item.id === localStorage.getItem("activeTeam")) ?? projects[0]);
 
   useEffect(() => {
     const fetchRooms = async () => {
       const { data } = await get_api(`/dashboard`);
       if (data) {
         setProjects(data);
-        setRooms(
-          data.find((project: Project) => project.id === pathname.split("/")[2])
-            ?.room || []
-        );
+        setRooms(data.find((project: Project) => project.id === pathname.split("/")[2])?.room || []);
         setActiveTeam(
-          data.find(
-            (project: Project) => project.id == pathname.split("/")[2]
-          ) || projects[0]
-        );
+          data.find((project: Project) => project.id == pathname.split("/")[2]) || projects[0]
+        )
       }
     };
     fetchRooms();
-  }, [pathname, projects]);
+  }, [])
 
   return (
     <Sidebar collapsible="icon">
@@ -131,9 +91,7 @@ const AppSidebar: React.FC<Props> = () => {
                       <Sparkles className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {activeTeam?.name}
-                      </span>
+                      <span className="truncate font-semibold">{activeTeam?.name}</span>
                       <span className="truncate text-xs">free</span>
                     </div>
                     <ChevronsUpDown className="ml-auto" />
@@ -150,34 +108,24 @@ const AppSidebar: React.FC<Props> = () => {
                   </DropdownMenuLabel>
                   {projects.map((project, index) => (
                     <DropdownMenuItem
-                      key={index}
+                      key={project.name}
                       onClick={() => setActiveTeam(project)}
                       className="gap-2 p-2"
                     >
-                      <Link
-                        href={`/project/${project.id}`}
-                        className="flex items-center gap-2"
-                      >
-                        <div className="flex size-6 items-center justify-center rounded-sm border">
-                          <Sparkles className="size-4 shrink-0" />
-                        </div>
-                        {project.name}
-                      </Link>
+                      <a href={`/chat/${project.id}`} className="flex items-center gap-2" onClick={() => localStorage.setItem("activeTeam", project.id)}>
+                      <div className="flex size-6 items-center justify-center rounded-sm border">
+                        <Sparkles className="size-4 shrink-0" />
+                      </div>
+                      {project.name}
+                      </a>
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="gap-2 p-2" asChild>
-                    <Link
-                      href="/project/new"
-                      className="flex items-center gap-2"
-                    >
-                      {" "}
-                      <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                        <Plus className="size-4" />
-                      </div>
-                      <div className="font-medium text-muted-foreground">
-                        Add Project
-                      </div>
+                   <Link href="/project/new" className="flex items-center gap-2"> <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                      <Plus className="size-4" />
+                    </div>
+                    <div className="font-medium text-muted-foreground">Add Project</div>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -190,23 +138,18 @@ const AppSidebar: React.FC<Props> = () => {
             <SidebarMenu>
               {rooms.length > 0 && (
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <a
-                      href={`/chat/${activeTeam?.id}`}
-                      className="hover:bg-base-200 border border-base-300"
-                    >
-                      <span className="flex items-center gap-2">
-                        <Plus size={14} /> New Chat
-                      </span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href={`/chat/${activeTeam?.id}`} className="hover:bg-base-200 border border-base-300">
+                    <span className="flex items-center gap-2"><Plus size={14} /> New Chat</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               )}
               {rooms.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton asChild>
-                    <a href={item.id} className="hover:bg-base-200">
-                      <span>{item.name}</span>
+                    <a href={`/chat/${activeTeam?.id}/${item.id}`} className="hover:bg-base-200">
+                      <span >{item.name}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -229,9 +172,7 @@ const AppSidebar: React.FC<Props> = () => {
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">Het Patel</span>
-                      <span className="truncate text-xs">
-                        hettptl@gmail.com
-                      </span>
+                      <span className="truncate text-xs">hettptl@gmail.com</span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
                   </SidebarMenuButton>
@@ -246,17 +187,11 @@ const AppSidebar: React.FC<Props> = () => {
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage src={""} alt={"Het Patel"} />
-                        <AvatarFallback className="rounded-lg">
-                          HP
-                        </AvatarFallback>
+                        <AvatarFallback className="rounded-lg">HP</AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">
-                          Het Patel
-                        </span>
-                        <span className="truncate text-xs">
-                          hettptl@gmail.com
-                        </span>
+                        <span className="truncate font-semibold">Het Patel</span>
+                        <span className="truncate text-xs">hettptl@gmail.com</span>
                       </div>
                     </div>
                   </DropdownMenuLabel>

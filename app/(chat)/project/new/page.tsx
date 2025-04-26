@@ -43,14 +43,17 @@ const CreateProjectForm: React.FC = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
     setIsLoading(true);
-    const { data: response, message } = await post_api("/dashboard", data);
+    const token = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("token="))
+      ?.split("=")[1];
+    const {data: response, message} = await post_api("/dashboard", data);
     setIsLoading(false);
     if (response) {
-      toast.success(message);
-      sessionStorage.setItem("latest_project", response.id);
+      toast("Great! Your project is created.");
       router.push(`/chat/${response.id}`);
     } else {
-      toast.error(message);
+      toast("You are logged out.");
     }
   }
   return (

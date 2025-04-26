@@ -1,125 +1,108 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useId } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import AuthLayout from "@/app/_components/AuthLayout";
 import { post_api } from "@/helper/api";
-import { Loader } from "lucide-react";
 
-const Page = () => {
+const SignupPage = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const id = useId();
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     if (email && password && name) {
-      try {
-        const { data, message } = await post_api("/auth/register", {
-          email,
-          password,
-          name,
-        });
+      const { data, message } = await post_api("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-        if (data) {
-          toast.success(message);
-          router.push("/dashboard");
-        } else {
-          toast.error(message);
-        }
-      } catch {
-        toast.warning("Something went wrong");
+      if (!data) {
+        toast.error(message);
+      } else {
+        toast.success("Check your inbox for verification email");
+        router.push("/login");
       }
     } else {
       toast("Please fill in all fields");
     }
-    setIsLoading(false);
   };
 
   return (
     <AuthLayout
-      title="Create an account"
-      description="Enter your details to get started"
+      title="Sign up to ReCode.ai"
+      description="We just need a few details to get you started."
     >
-      <form
-        onSubmit={handleSignup}
-        className="space-y-5 w-full max-w-sm mx-auto"
-      >
+      <form onSubmit={handleSignup} className="space-y-5">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor={`${id}-name`}>Full name</Label>
             <Input
-              id="name"
+              id={`${id}-name`}
+              placeholder="Matt Welsh"
               type="text"
-              placeholder="John Doe"
+              required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              autoComplete="off"
-              required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor={`${id}-email`}>Email</Label>
             <Input
-              id="email"
+              id={`${id}-email`}
+              placeholder="hi@yourcompany.com"
               type="email"
-              placeholder="name@company.com"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="off"
-              required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor={`${id}-password`}>Password</Label>
             <Input
-              id="password"
-              type="password"
+              id={`${id}-password`}
               placeholder="Enter your password"
+              type="password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete="off"
-              required
             />
           </div>
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-blue-700/60 hover:bg-blue-700/80"
+          className="w-full bg-blue-600 hover:bg-blue-600/80 text-white"
         >
-          {isLoading ? (
-            <>
-              <Loader className="animate-spin" />
-            </>
-          ) : (
-            <>Sign Up</>
-          )}
+          Sign up
         </Button>
 
         <div className="flex items-center gap-3 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
           <span className="text-xs text-muted-foreground">Or</span>
         </div>
 
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" type="button" className="w-full">
           Continue with Google
         </Button>
 
-        <p className="text-center text-sm text-base-600">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Sign in
+        <p className="text-center text-xs text-muted-foreground mt-4">
+          By signing up you agree to our{" "}
+          <a className="underline hover:no-underline" href="#">
+            Terms
           </a>
+          .
         </p>
       </form>
     </AuthLayout>
   );
 };
 
-export default Page;
+export default SignupPage;

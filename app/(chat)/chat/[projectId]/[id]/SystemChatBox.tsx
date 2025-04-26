@@ -1,14 +1,59 @@
-import React, { useEffect } from "react";
-import { marked } from "marked";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { atomOneDarkReasonable } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { Copy, CopyCheck } from "lucide-react";
+"use client";
 
-const SystemChatBox = ({ message }: { message: any }) => {
+import React, { useEffect } from "react";
+import RenderCode from "@/app/_components/(chat)/RenderCode";
+import * as marked from "marked";
+
+const parseMessageToComponents = (message: string) => {
+  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)\n```/g;
+
+  const elements: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  let match;
+  while ((match = codeBlockRegex.exec(message)) !== null) {
+    const [fullMatch, language, codeContent] = match;
+    const matchStart = match.index;
+
+    // Add text before this code block
+    if (matchStart > lastIndex) {
+      const textBefore = message.slice(lastIndex, matchStart).trim();
+      if (textBefore) {
+        elements.push(
+          <div key={`text-${matchStart}`} className="mb-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: marked.parse(textBefore) }}>
+          </div>
+        );
+      }
+    }
+
+    // Push the RenderCode component
+    elements.push(
+      RenderCode(codeContent.trim(), language || "plaintext", matchStart)
+    );
+
+    lastIndex = match.index + fullMatch.length;
+  }
+
+  // Add remaining text after last code block
+  if (lastIndex < message.length) {
+    const remaining = message.slice(lastIndex).trim();
+    if (remaining) {
+      elements.push(
+        <div key="text-end" className="mb-4 whitespace-pre-wrap [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4" dangerouslySetInnerHTML={{ __html: marked.parse(remaining) }}>
+        </div>
+      );
+    }
+  }
+
+  return elements;
+};
+
+
+const SystemChatBox = ({ message }: { message: string }) => {
   const [isCopied, setIsCopied] = React.useState(false);
 
   useEffect(() => {
-    if(isCopied) {
+    if (isCopied) {
       const timer = setTimeout(() => {
         setIsCopied(false);
       }, 2000);
@@ -16,44 +61,9 @@ const SystemChatBox = ({ message }: { message: any }) => {
     }
   }, [isCopied]);
 
-  let html: { file: string; code: string }[] = [];
+  const parsed = parseMessageToComponents(message);
 
-  try {
-    const raw = message.content.replace(/```json|```/g, "").trim();
-    
-    const parsed = JSON.parse(raw);
-
-    parsed.forEach((fileObj: Record<string, string>) => {
-      const filePath = Object.keys(fileObj)[0];
-      const code = fileObj[filePath];
-
-      html.push({
-        file: filePath,
-        code: code,
-      });
-    });
-  } catch (error) {
-    console.error("Error parsing content in SystemChatBox:", error);
-  }
-
-  return html.map((item, index) => (
-    <div key={index} className="mb-4">
-      <div className="flex items-center justify-between mt-4 bg-base-150 px-2 py-3">
-        <h2 className="text-base-800 font-medium text-sm">{item.file}</h2>
-        <div className="cursor-pointer" onClick={() => {navigator.clipboard.writeText(item.code); setIsCopied(true)}}>
-          {isCopied ? (
-             <CopyCheck size={14} />
-          ) : (
-            <Copy size={14} />
-          )}
-         
-        </div>
-      </div>
-      <SyntaxHighlighter language="typescript" style={atomOneDarkReasonable}>
-        {item.code}
-      </SyntaxHighlighter>
-    </div>
-  ));
+  return <div className="mt-8">{parsed}</div>;
 };
 
 export default SystemChatBox;

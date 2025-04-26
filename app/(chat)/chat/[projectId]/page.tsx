@@ -3,7 +3,7 @@ import ChatInput from "@/app/_components/(chat)/ChatInput";
 import React from "react";
 import { useChatContext } from "./useChat";
 
-const Page = () => {
+const page = () => {
   const { messages, latestGeneratedAnswer } = useChatContext();
   return (
     <div className="h-full flex flex-col items-center justify-center w-full max-w-2xl mx-auto">
@@ -15,4 +15,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;
